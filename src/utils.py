@@ -3,7 +3,6 @@ from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.callbacks import StdOutCallbackHandler
 from llm import llm
 from prompts import qa_template
 
@@ -35,3 +34,12 @@ def setup_dbqa():
     dbqa = build_retrieval_qa(llm, qa_prompt, vectordb)
 
     return dbqa
+
+
+# Instantiate retriever
+def retrieve(user_prompt):
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+                                       model_kwargs={'device': 'cuda'})
+    vectordb = FAISS.load_local('vectorstore/db_faiss', embeddings)
+    retriever = vectordb.as_retriever()
+    return retriever.get_relevant_documents(user_prompt)

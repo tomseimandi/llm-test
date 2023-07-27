@@ -30,5 +30,5 @@ if __name__ == "__main__":
         print(f'Page Number: {doc.metadata["page"]}\n')
         print('=' * 50)  # Formatting separator
 
-    # Display time taken for CPU inference
+    # Display time taken for inference
     print(f"Time to retrieve response: {end - start}")
