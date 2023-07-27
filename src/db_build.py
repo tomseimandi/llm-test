@@ -18,7 +18,7 @@ texts = text_splitter.split_documents(documents)
 
 # Load embeddings model
 embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2',
-                                   model_kwargs={'device': 'cpu'})
+                                   model_kwargs={'device': 'cuda'})
 
 # Build and persist FAISS vector store
 vectorstore = FAISS.from_documents(texts, embeddings)
