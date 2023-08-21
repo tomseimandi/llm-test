@@ -3,3 +3,4 @@ langchain
 ctransformers
 faiss-cpu
 pypdf
+streamlit
