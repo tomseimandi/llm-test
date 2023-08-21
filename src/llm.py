@@ -1,4 +1,6 @@
 # File: llm.py
+import torch
+
 # from langchain.llms import CTransformers
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
@@ -19,7 +21,7 @@ callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 n_batch = 512
 llm = LlamaCpp(
     model_path="models/llama-2-7b-chat.ggmlv3.q8_0.bin",
-    n_gpu_layers=40,
+    n_gpu_layers=0,
     n_batch=512,
     callback_manager=callback_manager,
     verbose=True,
