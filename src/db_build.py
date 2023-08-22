@@ -8,22 +8,22 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from constants import EMBEDDINGS_MODEL, DEVICE
 
 
-def create_faiss_database(documents, embeddings):
+def create_faiss_vectorstore(documents, embeddings):
     """Build and persist FAISS vector store.
 
     Args:
-        database_name: Text documents.
+        documents: Text documents.
         embeddings: Embeddings.
     """
     vectorstore = FAISS.from_documents(documents, embeddings)
     vectorstore.save_local('vectorstore/db_faiss')
 
 
-def create_chroma_database(documents, embeddings):
+def create_chroma_vectorstore(documents, embeddings):
     """Build and persist Chroma vector store.
 
     Args:
-        database_name: Text documents.
+        documents: Text documents.
         embeddings: Embeddings.
     """
     vectorstore = Chroma.from_documents(documents, embeddings)
@@ -51,9 +51,9 @@ def main(database_name: Literal["faiss", "chroma"]):
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDINGS_MODEL,
                                        model_kwargs={'device': DEVICE})
     if database_name == "faiss":
-        create_faiss_database(documents, embeddings)
+        create_faiss_vectorstore(documents, embeddings)
     elif database_name == "chroma":
-        create_chroma_database(documents, embeddings)
+        create_chroma_vectorstore(documents, embeddings)
     else:
         raise ValueError("Database name must be 'faiss' or 'chroma'")
 

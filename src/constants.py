@@ -10,3 +10,6 @@ if torch.cuda.is_available():
     DEVICE = 'cuda'
 else:
     DEVICE = 'cpu'
+
+# Database name for the vector store
+DATABASE_NAME = 'faiss'
