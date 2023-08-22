@@ -26,8 +26,12 @@ def create_chroma_vectorstore(documents, embeddings):
         documents: Text documents.
         embeddings: Embeddings.
     """
-    vectorstore = Chroma.from_documents(documents, embeddings)
-    vectorstore.save_local('vectorstore/db_chroma')
+    vectorstore = Chroma.from_documents(
+        documents,
+        embeddings,
+        persist_directory='vectorstore/db_chroma'
+    )
+    del vectorstore
 
 
 def main(database_name: Literal["faiss", "chroma"]):

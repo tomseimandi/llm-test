@@ -93,5 +93,8 @@ def load_faiss_vectorstore(database_name, embeddings):
 
 
 def load_chroma_vectorstore(database_name, embeddings):
-    vectordb = Chroma.load_local('vectorstore/db_chroma', embeddings)
+    vectordb = Chroma(
+        persist_directory='vectorstore/db_chroma',
+        embedding_function=embeddings
+    )
     return vectordb
