@@ -13,3 +13,5 @@ else:
 
 # Database name for the vector store
 DATABASE_NAME = 'faiss'
+
+GPU_LAYERS = 35

@@ -1,20 +1,12 @@
 # To update FAISS vector store
 import os
-import torch
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-from constants import EMBEDDINGS_MODEL
-
-
-# Device
-if torch.cuda.is_available():
-    device = 'cuda'
-else:
-    device = 'cpu'
+from constants import EMBEDDINGS_MODEL, DEVICE
 
 
 embeddings = HuggingFaceEmbeddings(model_name=EMBEDDINGS_MODEL,
-                                   model_kwargs={'device': device})
+                                   model_kwargs={'device': DEVICE})
 
 
 def update_vectorstore(docs, embeddings):
