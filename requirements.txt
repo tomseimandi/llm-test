@@ -4,3 +4,4 @@ ctransformers
 faiss-cpu
 pypdf
 streamlit
+chromadb
