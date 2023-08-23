@@ -1,37 +1,15 @@
 # File: db_build.py
 import argparse
 from typing import Literal
-from langchain.vectorstores import FAISS, Chroma
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain.embeddings import HuggingFaceEmbeddings
-from constants import EMBEDDINGS_MODEL, DEVICE
-
-
-def create_faiss_vectorstore(documents, embeddings):
-    """Build and persist FAISS vector store.
-
-    Args:
-        documents: Text documents.
-        embeddings: Embeddings.
-    """
-    vectorstore = FAISS.from_documents(documents, embeddings)
-    vectorstore.save_local('vectorstore/db_faiss')
-
-
-def create_chroma_vectorstore(documents, embeddings):
-    """Build and persist Chroma vector store.
-
-    Args:
-        documents: Text documents.
-        embeddings: Embeddings.
-    """
-    vectorstore = Chroma.from_documents(
-        documents,
-        embeddings,
-        persist_directory='vectorstore/db_chroma'
-    )
-    del vectorstore
+from constants import (
+    EMBEDDINGS_MODEL,
+    DEVICE,
+    S3_BUCKET_NAME,
+    S3_CHROMA_PREFIX,
+    S3_PDF_PREFIX
+)
+from db_utils import create_chroma, update_chroma
 
 
 def main(database_name: Literal["faiss", "chroma"]):
@@ -40,24 +18,27 @@ def main(database_name: Literal["faiss", "chroma"]):
     Args:
         database_name (Literal["faiss", "chroma"]): Database type.
     """
-    # Load PDF file from data path
-    loader = DirectoryLoader('data/',
-                             glob="*.pdf",
-                             loader_cls=PyPDFLoader)
-    raw_documents = loader.load()
-
-    # Split text from PDF into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500,
-                                                   chunk_overlap=50)
-    documents = text_splitter.split_documents(raw_documents)
-
-    # Load embeddings model
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDINGS_MODEL,
-                                       model_kwargs={'device': DEVICE})
     if database_name == "faiss":
-        create_faiss_vectorstore(documents, embeddings)
+        raise NotImplementedError("No implementation yet for FAISS.")
     elif database_name == "chroma":
-        create_chroma_vectorstore(documents, embeddings)
+        # Create locally persistent vectorstore from PDF stored on s3
+        # and export it to s3 to make it available for later use
+        vectorstore = create_chroma(
+            embeddings=HuggingFaceEmbeddings(
+                model_name=EMBEDDINGS_MODEL,
+                model_kwargs={'device': DEVICE}
+            )
+        )
+
+        # TODO: make this a method of class ChromaS3 ?
+        update_chroma(
+            vectorstore,
+            S3_BUCKET_NAME,
+            S3_PDF_PREFIX)
+        vectorstore.save_to_s3(
+            S3_BUCKET_NAME,
+            S3_CHROMA_PREFIX
+        )
     else:
         raise ValueError("Database name must be 'faiss' or 'chroma'")
 
