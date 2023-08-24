@@ -10,9 +10,9 @@
 # """
 
 # French
-qa_template = """Utilisez le contexte suivant pour répondre à la question.
+qa_template = """Utilise le contexte suivant pour répondre à la question.
 Contexte: {context}
 Question: {question}
-Retournez seulement la réponse utile en dessous.
+Retourne seulement une réponse utile et concise en dessous. Sans contexte, réponds: 'Je n'ai pas trouvé de réponse dans le document'.
 Réponse utile:
 """

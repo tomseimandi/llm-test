@@ -7,7 +7,7 @@ from constants import (
     S3_CHROMA_PREFIX,
     CHROMA_LOCAL_PATH
 )
-from llm import llm
+from llm import get_llm
 
 
 st.title('Document QA prototype - Comptes sociaux')
@@ -34,6 +34,7 @@ def generate_response(dbqa, input_text):
 # TODO: adapt for FAISS
 vectordb = get_vectorstore()
 qa_prompt = set_qa_prompt()
+llm = get_llm()
 
 
 with st.form('my_form'):

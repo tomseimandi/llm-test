@@ -3,7 +3,7 @@ from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS, Chroma
-from llm import llm
+from llm import get_llm
 from prompts import qa_template
 from constants import EMBEDDINGS_MODEL, DEVICE, DATABASE_NAME
 
@@ -30,6 +30,7 @@ def build_retrieval_qa(llm, prompt, vectordb):
 
 # Instantiate QA object
 def setup_dbqa():
+    llm = get_llm()
     vectordb = load_vectorstore(DATABASE_NAME)
     qa_prompt = set_qa_prompt()
     dbqa = build_retrieval_qa(llm, qa_prompt, vectordb)
@@ -69,6 +70,7 @@ def build_retrieval_qa_filter(llm, prompt, vectordb, source):
 
 # Filter dbqa
 def setup_dbqa_filter(source):
+    llm = get_llm()
     vectordb = load_vectorstore(DATABASE_NAME)
     qa_prompt = set_qa_prompt()
     dbqa = build_retrieval_qa_filter(llm, qa_prompt, vectordb, source)
