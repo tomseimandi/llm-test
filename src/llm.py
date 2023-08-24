@@ -30,6 +30,7 @@ def get_llm():
         n_threads=8,
         callback_manager=callback_manager,
         verbose=True,
+        streaming=True
     )
     # HACK to test: https://twitter.com/RLanceMartin/status/1681879318493003776?s=20
     # https://python.langchain.com/docs/guides/local_llms
