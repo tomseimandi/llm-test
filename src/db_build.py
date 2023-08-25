@@ -9,7 +9,7 @@ from constants import (
     S3_CHROMA_PREFIX,
     S3_PDF_PREFIX
 )
-from db_utils import create_chroma, update_chroma
+from db_utils import create_chroma, update_chroma_unstructured
 
 
 def main(database_name: Literal["faiss", "chroma"]):
@@ -31,7 +31,7 @@ def main(database_name: Literal["faiss", "chroma"]):
         )
 
         # TODO: make this a method of class ChromaS3 ?
-        update_chroma(
+        update_chroma_unstructured(
             vectorstore,
             S3_BUCKET_NAME,
             S3_PDF_PREFIX)

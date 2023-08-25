@@ -7,7 +7,7 @@ from langchain.vectorstores import FAISS
 from constants import EMBEDDINGS_MODEL, DEVICE, CHROMA_LOCAL_PATH
 from chroma_s3 import ChromaS3
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader
+from langchain.document_loaders import PyPDFLoader, DirectoryLoader, UnstructuredPDFLoader
 
 
 embeddings = HuggingFaceEmbeddings(model_name=EMBEDDINGS_MODEL,
@@ -105,6 +105,55 @@ def update_chroma(
             loader_cls=PyPDFLoader
         )
         raw_documents = loader.load()
+
+        # Split text from PDF into chunks
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500,
+            chunk_overlap=50
+        )
+        documents = text_splitter.split_documents(raw_documents)
+        for document in documents:
+            clean_path = os.path.basename(document.metadata['source'])
+            document.metadata['source'] = clean_path
+        chroma_vectorstore.add_documents(documents)
+    return
+
+
+def update_chroma_unstructured(
+    chroma_vectorstore: ChromaS3,
+    s3_bucket_name: str,
+    s3_prefix: str
+):
+    # Files that are already in the vector store
+    metadatas = chroma_vectorstore.get().get('metadatas')
+    files = [metadata['source'] for metadata in metadatas]
+    unique_files = list(set(files))
+    print(f'{len(unique_files)} already in the vector store.')
+
+    s3 = boto3.client(
+        "s3",
+        endpoint_url='https://'+'minio.lab.sspcloud.fr'
+    )
+
+    raw_documents = []
+    with tempfile.TemporaryDirectory() as temp_dir:
+        response = s3.list_objects_v2(Bucket=s3_bucket_name, Prefix=s3_prefix)
+        n_added_files = 0
+        for obj in response.get('Contents', []):
+            s3_key = obj['Key']
+            if (s3_key.lower().endswith('.pdf')) and (os.path.basename(s3_key) not in unique_files):
+                n_added_files += 1
+                local_file_path = os.path.join(
+                    temp_dir,
+                    os.path.basename(s3_key)
+                )
+                s3.download_file(s3_bucket_name, s3_key, local_file_path)
+
+                loader = UnstructuredPDFLoader(
+                    local_file_path
+                )
+                raw_documents += loader.load()
+        print(f"{n_added_files} new file(s) added to the vector store.")
 
         # Split text from PDF into chunks
         text_splitter = RecursiveCharacterTextSplitter(

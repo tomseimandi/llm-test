@@ -14,3 +14,5 @@ sudo apt -y install tesseract-ocr-fra
 sudo apt -y install poppler-utils
 sudo apt -y install libmagic-dev
 sudo apt -y install ghostscript python3-tk
+
+pip install "unstructured.PaddleOCR"
