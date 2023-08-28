@@ -3,6 +3,7 @@ import torch
 
 
 EMBEDDINGS_MODEL = 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'
+# EMBEDDINGS_MODEL = 'antoinelouis/biencoder-camembert-base-mmarcoFR'
 # EMBEDDINGS_MODEL = 'sentence-transformers/all-MiniLM-L6-v2'
 
 # Device
@@ -14,7 +15,7 @@ else:
 # Database name for the vector store
 DATABASE_NAME = 'chroma'
 
-GPU_LAYERS = 35
+GPU_LAYERS = 0
 
 # Paths
 CHROMA_LOCAL_PATH = 'vectorstore/db_chroma'
