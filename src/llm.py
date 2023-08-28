@@ -1,6 +1,7 @@
 # File: llm.py
 # from langchain.llms import CTransformers
 import boto3
+import os
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.llms import LlamaCpp
@@ -48,10 +49,10 @@ def get_llm(from_s3: bool = True):
 
 
 def download_llm_from_s3():
-    s3 = boto3.client(
-        "s3",
-        endpoint_url='https://'+'minio.lab.sspcloud.fr'
-    )
-
-    s3.download_file(S3_BUCKET_NAME, S3_LLM_KEY, LLM_PATH)
+    if not os.path.exists(LLM_PATH):
+        s3 = boto3.client(
+            "s3",
+            endpoint_url='https://'+'minio.lab.sspcloud.fr'
+        )
+        s3.download_file(S3_BUCKET_NAME, S3_LLM_KEY, LLM_PATH)
     return
