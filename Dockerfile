@@ -10,20 +10,6 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install MinIO client
-RUN curl https://dl.min.io/client/mc/release/linux-amd64/mc \
-  --create-dirs \
-  -o $HOME/minio-binaries/mc
-
-RUN chmod +x $HOME/minio-binaries/mc
-
-RUN export PATH=$PATH:$HOME/minio-binaries/
-
-RUN export MC_HOST_s3=https://$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY@minio.lab.sspcloud.fr
-
-# Download model
-RUN mc cp s3/tseimandi/llama-2-7b-chat.ggmlv3.q4_K_M.bin models/llama-2-7b-chat.ggmlv3.q4_K_M.bin
-
 # Clone repository
 RUN git clone https://github.com/tomseimandi/llm-test.git .
 
