@@ -1,14 +1,18 @@
 # File: llm.py
 # from langchain.llms import CTransformers
+import boto3
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.llms import LlamaCpp
-from constants import GPU_LAYERS, LLM_PATH
+from constants import GPU_LAYERS, LLM_PATH, S3_BUCKET_NAME, S3_LLM_KEY
 import streamlit as st
 
 
 @st.cache_resource
-def get_llm():
+def get_llm(from_s3: bool = True):
+    if from_s3:
+        download_llm_from_s3()
+
     # Local CTransformers wrapper for Llama-2-7B-Chat
     # llm = CTransformers(model='models/llama-2-7b-chat.ggmlv3.q8_0.bin',
     #                     model_type='llama',  # Model type Llama
@@ -41,3 +45,13 @@ def get_llm():
     # GPU, so llama.cpp it's still CPU intensive. So your problem
     # will definitely be limited by your CPU.
     return llm
+
+
+def download_llm_from_s3():
+    s3 = boto3.client(
+        "s3",
+        endpoint_url='https://'+'minio.lab.sspcloud.fr'
+    )
+
+    s3.download_file(S3_BUCKET_NAME, S3_LLM_KEY, LLM_PATH)
+    return
