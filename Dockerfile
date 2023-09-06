@@ -1,14 +1,15 @@
-FROM python:3.9-slim
+ARG BASE_IMAGE=inseefrlab/onyxia-python-pytorch
+FROM $BASE_IMAGE
 
 WORKDIR /app
 
 # Install git
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    software-properties-common \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+#     build-essential \
+#     curl \
+#     software-properties-common \
+#     git \
+#     && rm -rf /var/lib/apt/lists/*
 
 # Clone repository
 RUN git clone https://github.com/tomseimandi/llm-test.git .

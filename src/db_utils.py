@@ -142,6 +142,7 @@ def update_chroma_unstructured(
         for obj in response.get('Contents', []):
             s3_key = obj['Key']
             if (s3_key.lower().endswith('.pdf')) and (os.path.basename(s3_key) not in unique_files):
+                print(f"Adding file {s3_key}.")
                 n_added_files += 1
                 local_file_path = os.path.join(
                     temp_dir,
@@ -149,10 +150,20 @@ def update_chroma_unstructured(
                 )
                 s3.download_file(s3_bucket_name, s3_key, local_file_path)
 
-                loader = UnstructuredPDFLoader(
-                    local_file_path
-                )
-                raw_documents += loader.load()
+                try:
+                    loader = UnstructuredPDFLoader(
+                        local_file_path,
+                        ocr_languages="fra",
+                        strategy="auto"
+                    )
+                    raw_documents += loader.load()
+                except ValueError:
+                    loader = UnstructuredPDFLoader(
+                        local_file_path,
+                        ocr_languages="fra",
+                        strategy="ocr_only"
+                    )
+                    raw_documents += loader.load()
         print(f"{n_added_files} new file(s) added to the vector store.")
 
         # Split text from PDF into chunks
