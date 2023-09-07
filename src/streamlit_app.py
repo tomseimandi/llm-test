@@ -9,6 +9,7 @@ from constants import (
 )
 from llm import get_llm
 from pathlib import Path
+from stream_handler import StreamDisplayHandler
 
 
 st.title('Document QA prototype')
@@ -37,17 +38,12 @@ def get_available_documents(_vectordb):
 
 def generate_response(dbqa, input_text):
     response = dbqa({'query': input_text})
-    st.info(
-        body=response['result']
-    )
-
 
 # Loading ChromaDB vectorstore
 # TODO: adapt for FAISS
 vectordb = get_vectorstore()
 available_documents = get_available_documents(vectordb)
 qa_prompt = set_qa_prompt()
-llm = get_llm()
 
 
 with st.form('my_form'):
@@ -66,17 +62,28 @@ with st.form('my_form'):
     # Question
     input_text = st.text_area(
         label='Question :question:',
-        value='Quelle société détient SAJARLE SAS ?',
+        value='Quelle société détient SAJARE SARL ?',
         help="Posez une question à l'assistant!")
+
+    # Submit button
+    submitted = st.form_submit_button('Submit')
+    
+    # Response box
+    response_box = st.empty()
+    display_handler = StreamDisplayHandler(
+        response_box,
+        display_method='write'
+    )
+    llm = get_llm(_display_handler=display_handler)
 
     # Source to filter metadata
     source = f"{company_id}_{year}.pdf"
     dbqa = build_retrieval_qa_filter(llm, qa_prompt, vectordb, source)
 
-    submitted = st.form_submit_button('Submit')
+    # Actions when pressing button
     if submitted:
         if (company_id, year) not in available_documents:
-            st.info(
+            response_box.markdown(
                 body=f"Pas de document pour le SIREN {company_id} en {year}."
             )
         else:
