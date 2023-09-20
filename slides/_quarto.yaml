@@ -4,5 +4,5 @@ project:
     - index.qmd
 
 format:
-  revealjs:
+  onyxia-revealjs:
     output-file: index.html
