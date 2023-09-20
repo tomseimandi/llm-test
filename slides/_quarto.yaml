@@ -1,0 +1,6 @@
+project:
+  output-dir: docs
+
+format:
+  onyxia-revealjs:
+    output-file: index.html
