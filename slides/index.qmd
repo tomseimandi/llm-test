@@ -12,7 +12,7 @@ chalkboard: # press the B key to toggle chalkboard
 # uncomment to use the multiplex mode:
 # multiplex: true
 format:
-  onyxia-revealjs:
+  revealjs:
     output-file: index.html
 controls: true
 css: custom.css
