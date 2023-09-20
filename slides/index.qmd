@@ -1,0 +1,45 @@
+---
+title: Document Question-Answering
+author: ""
+date: "20/09/2023"
+date-format: "D MMMM YYYY"
+slide-number: true
+lang: fr-FR
+# for blind readers:
+slide-tone: false
+chalkboard: # press the B key to toggle chalkboard
+  theme: whiteboard
+# uncomment to use the multiplex mode:
+# multiplex: true
+format:
+  onyxia-revealjs:
+    output-file: index.html
+controls: true
+css: custom.css
+from: markdown+emoji
+ascii: true
+execute: 
+  echo: false
+  warning: false
+---
+
+# Contexte
+
+- Document QA : tâche qui consiste à répondre à des questions concernant des documents (par exemple des documents PDF)
+- Pipeline de document QA : prend en entrée une paire (ensemble de documents, question) et renvoie une réponse en langage naturel
+- Sollicitations (DSE, SDES)
+
+# Architecture
+
+![](img/archi.svg)
+
+# Outils
+
+- [Langchain 🦜](https://python.langchain.com/docs/get_started/introduction): framework Python pour le développement d'applications reposant sur des modèles de langage
+- [chroma](https://www.trychroma.com/): vector store
+
+# Enjeux
+
+- Choix des modèles
+- Sélection des chunks pertinents
+- Fine-tuning des modèles
