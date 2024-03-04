@@ -175,5 +175,6 @@ def update_chroma_unstructured(
         for document in documents:
             clean_path = os.path.basename(document.metadata['source'])
             document.metadata['source'] = clean_path
-        chroma_vectorstore.add_documents(documents)
+        if documents:  # Non-empty list
+            chroma_vectorstore.add_documents(documents)
     return

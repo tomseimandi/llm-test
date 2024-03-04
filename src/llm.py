@@ -1,5 +1,6 @@
 # File: llm.py
 # from langchain.llms import CTransformers
+from typing import Optional
 import boto3
 import os
 from langchain.callbacks.manager import CallbackManager
@@ -11,7 +12,7 @@ from stream_handler import StreamDisplayHandler
 
 
 @st.cache_resource
-def get_llm(_display_handler: StreamDisplayHandler, from_s3: bool = True):
+def get_llm(_display_handler: Optional[StreamDisplayHandler] = None, from_s3: bool = True):
     if from_s3:
         download_llm_from_s3()
 
@@ -23,7 +24,10 @@ def get_llm(_display_handler: StreamDisplayHandler, from_s3: bool = True):
     #                     gpu_layers=GPU_LAYERS)
 
     # Callbacks support token-wise streaming
-    callback_manager = CallbackManager([StreamingStdOutCallbackHandler(), _display_handler])
+    if _display_handler is not None:
+        callback_manager = CallbackManager([StreamingStdOutCallbackHandler(), _display_handler])
+    else:
+        callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
     # Verbose is required to pass to the callback manager
     n_batch = 512
     llm = LlamaCpp(
